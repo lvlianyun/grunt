@@ -4,10 +4,10 @@
 require.config({
     /* baseUrl: '/',*////根目录配置*/ //没有配置 则默认为data-main 所在文件夹 的路径
     paths: {
-        'angular':'../assets/angular',
-        'ngResource':'../assets/angular-resource',
-        'ngRoute':'../assets/angular-route',
-        'jquery':'../assets/jquery'
+        'angular':'../assets/lib/angular',
+        'ngResource':'../assets/lib/angular-resource',
+        'ngRoute':'../assets/lib/angular-route',
+        'jquery':'../assets/lib/jquery'
     },
     shim:{
         angular:{
