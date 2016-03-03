@@ -2118,7 +2118,7 @@ function toDebugString(obj) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.3.9-local+sha.a3c3bf3',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.3.9-local+sha.a3c3bf3',    // all of these placeholder strings will be replaced by grunt-learn's
   major: 1,    // package task
   minor: 3,
   dot: 9,
