@@ -1,0 +1,1 @@
+require.config({paths:{angular:"assets/lib/angular",ngResource:"assets/lib/angular-resource",ngRoute:"assets/lib/angular-route",jquery:"assets/lib/jquery"},shim:{angular:{exports:"angular"},ngRoute:{exports:"ngRoute",deps:["angular"]},ngResource:{exports:"ngResource",deps:["angular"]}}});
