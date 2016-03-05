@@ -52,7 +52,22 @@ module.exports=function(grunt){
                 }, {
                     src: '../common/config.js',
                     dest: 'dist/common/config.js'
+                },{
+                    src: '../css/**/*.css',
+                    dest: 'dist/'
                 }]
+            }
+        },
+        imagemin:{
+            dist:{
+                options: {
+                    optimizationLevel: 3 //定义 PNG 图片优化水平
+                },files:{
+                    expand: true,
+                    src:['../images/**/*.png'],
+                    dest:'dist/'
+                }
+
             }
         },
         copy: {
