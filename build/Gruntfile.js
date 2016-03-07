@@ -56,7 +56,7 @@ module.exports=function(grunt){
             }
         },
         copy: {
-            one: {
+            dist: {
                 files: [
                     {
                         expand: true,
@@ -98,6 +98,6 @@ module.exports=function(grunt){
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    grunt.registerTask('default', ['clean:start', 'transport', 'concat', 'uglify', 'copy:one', 'clean:done']);
+    grunt.registerTask('default', ['clean:start', 'transport', 'concat', 'uglify', 'copy', 'clean:done']);
 
 }
