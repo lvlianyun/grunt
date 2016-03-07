@@ -2,140 +2,64 @@
 
 module.exports=function(grunt){
 
-    grunt.initConfig({
-        transport:{
-            options:{
-                debug:false
-            },
-            common:{
-                files:[{
-                    expand:true,
-                    cwd:'../',
-                    src:'common/**/*.js',
-                    dest:'transport',
-                    ext: '.js'
-                }]
-            },
-            biz:{
-                 files:[{
-                     expand:true,
-                     cwd:'../',
-                     src:'main/**/*.js',
-                     dest:'transport',
-                     ext: '.js'
-               }]
+    // LiveReload的默认端口号，你也可以改成你想要的端口号
+    var lrPort = 8080;
+    // 使用connect-livereload模块，生成一个与LiveReload脚本
+    // <script src="http://127.0.0.1:35729/livereload.js?snipver=1" type="text/javascript"></script>
+    var lrSnippet = require('connect-livereload')({ port: lrPort });
 
-            }
-        },
-        concat:{
-            options:{
-                separator:';'
+    // 使用 middleware(中间件)，就必须关闭 LiveReload 的浏览器插件
+    var serveStatic = require('serve-static');
+    var serveIndex = require('serve-index');
+    var lrMiddleware = function(connect, options, middlwares) {
+        return [
+            lrSnippet,
+            // 静态文件服务器的路径 原先写法：connect.static(options.base[0])
+            serveStatic(options.base[0]),
+            // 启用目录浏览(相当于IIS中的目录浏览) 原先写法：connect.directory(options.base[0])
+            serveIndex(options.base[0])
+        ];
+    };
+
+    // 项目配置(任务配置)
+    grunt.initConfig({
+        // 读取我们的项目配置并存储到pkg属性中
+        pkg: grunt.file.readJSON('package.json'),
+        // 通过connect任务，创建一个静态服务器
+        connect: {
+            options: {
+                // 服务器端口号
+                port: 8000,
+                // 服务器地址(可以使用主机名localhost，也能使用IP)
+                hostname: 'localhost',
+                // 物理路径(默认为. 即根目录) 注：使用'.'或'..'为路径的时，可能会返回403 Forbidden. 此时将该值改为相对路径 如：/grunt/reloard。
+                base: '.'
             },
-            common:{
-                src:'transport/common/**/*.js',
-                dest:'concat/common/common-all.js',
-            },
-            main:{
-                files:{
-                    'concat/main/run.js':['transport/main/**/*.js']
+            livereload: {
+                options: {
+                    // 通过LiveReload脚本，让页面重新加载。
+                    middleware: lrMiddleware
                 }
             }
         },
-        uglify:{
-            common:{
-                src:'concat/common/common-all.js',
-                dest:'dist/common/common-all.js'
-            },
-            main: {
-                files: [{
-                    'dist/main/run.js': ['concat/main/run.js']
-                }, {
-                    src: '../common/config.js',
-                    dest: 'dist/common/config.js'
-                }]
-            }
-        },
-        imagemin:{
-            dist:{
+        // 通过watch任务，来监听文件是否有更改
+        watch: {
+            client: {
+                // 我们不需要配置额外的任务，watch任务已经内建LiveReload浏览器刷新的代码片段。
                 options: {
-                    optimizationLevel: 3 //定义 PNG 图片优化水平
-                },files:[{
-                    expand: true,
-                    src:['../images/**/*.png'],
-                    dest:'dist/images'
-                }]
-
-            }
-        },
-        autoprefixer:{
-            dist: {
-                option: {
-
+                    livereload: lrPort
                 },
-                files: [{
-                    expand: true,
-                    src: '../css/**/*.css',
-                    dest: 'dist/transport'
-                }]
+                // '**' 表示包含所有的子目录
+                // '*' 表示包含所有的文件
+                files: ['*.html', 'css/*', 'js/*', 'images/**/*']
             }
-        },
-        cssmin:{
-            dist:{
-                options: {
-                    report: 'gzip'
-                },
-                files: [{
-                    expand: true,
-                    src: 'transport/css/**/*.css',
-                    dest: 'dist/css'
-                }]
-            }
-        },
-        copy: {
-            dist: {
-                files: [
-                    {
-                        expand: true,
-                        src: ['../assets/**/*.js'],
-                        dest: 'dist/assets',
-                        ext: '.js'
-
-
-                    }, {
-                        expand: true,
-                        cwd: '../',
-                        src: '*.html',
-                        dest: 'dist/',
-                        ext: '.html'
-                    }
-                    , {
-                        src: '../node.run.js',
-                        dest: 'dist/node.run.js'
-                    }
-                ]
-            }
-        },
-
-        clean:{
-            start:{
-                src: ['transport','concat','dist']
-            },
-            done:{
-                src: ['transport','concat']
-            }
-
         }
-    });
+    }); // grunt.initConfig配置完毕
 
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-cmd-transport');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-imagemin');
-    grunt.loadNpmTasks('grunt-autoprefixer');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    // 加载插件
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', ['clean:start', 'transport', 'concat', 'uglify','autoprefixer','cssmin','imagemin', 'copy', 'clean:done']);
-
+    // 自定义任务
+    grunt.registerTask('live', ['connect', 'watch']);
 }
