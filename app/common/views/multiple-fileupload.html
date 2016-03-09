@@ -1,0 +1,19 @@
+<div class="multiple-fileupload">
+    <input type="file" name="files" data-basic-fileupload multiple />
+
+
+    <div class="thumbnail">
+
+        <div data-ng-repeat="file in files" data-ng-switch="file.iconClass" class="file-block">
+            <img data-ng-src="rf/attachment/download/{{file.fileId}}" data-ng-switch-when="fa-picture">
+            <img data-ng-switch-default>
+            <a data-ng-href="rf/attachment/download/{{file.fileId}}">{{file.fileName}}</a>
+            <a href="javascript:;" data-ng-click="remove(file);">删除</a>
+        </div>
+
+        <div style="clear:both;"></div>
+    </div>
+
+</div>
+
+
